@@ -9,12 +9,3 @@ import org.koin.dsl.module
 val networkModule = module {
     single { createHttpClient() }
 }
-
-fun appModules(): List<Module> = listOf(networkModule)
-
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
-    appDeclaration()
-    modules(appModules())
-}
-
-fun initKoinIOS() = initKoin {}

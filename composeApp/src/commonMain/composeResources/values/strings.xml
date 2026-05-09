@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Manutenção do Veículo</string>
+    <string name="search_plate_label">Placa do Veículo</string>
+    <string name="button_search">Buscar</string>
+    <string name="search_plate_label_warning">Digite uma placa para consultar o histórico</string>
+    <string name="maintenance_history">Histórico de Manutenção</string>
+</resources>
