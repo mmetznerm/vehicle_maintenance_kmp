@@ -37,4 +37,16 @@ interface VehicleDao {
         insertMaintenances(maintenances)
         insertPhotos(photos)
     }
+
+    @Query("SELECT * FROM vehicles WHERE syncStatus = :status")
+    suspend fun getVehiclesByStatus(status: String): List<VehicleEntity>
+
+    @Query("UPDATE vehicles SET syncStatus = :newStatus WHERE plate = :plate")
+    suspend fun updateVehicleSyncStatus(plate: String, newStatus: String)
+
+    @Query("SELECT * FROM maintenances WHERE syncStatus = :status")
+    suspend fun getMaintenancesByStatus(status: String): List<MaintenanceEntity>
+
+    @Query("UPDATE maintenances SET syncStatus = :newStatus WHERE id = :id")
+    suspend fun updateMaintenanceSyncStatus(id: String, newStatus: String)
 }
