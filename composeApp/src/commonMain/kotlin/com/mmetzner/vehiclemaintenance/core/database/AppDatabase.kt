@@ -11,7 +11,10 @@ import kotlinx.coroutines.IO
 
 @Database(
     entities = [VehicleEntity::class, MaintenanceEntity::class, MaintenancePhotoEntity::class],
-    version = 1
+    version = 2,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {

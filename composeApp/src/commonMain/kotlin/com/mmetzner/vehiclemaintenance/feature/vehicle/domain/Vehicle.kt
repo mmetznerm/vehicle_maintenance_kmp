@@ -5,5 +5,6 @@ data class Vehicle(
     val model: String,
     val brand: String,
     val year: Int,
-    val maintenances: List<Maintenance>? = null
+    val maintenances: List<Maintenance>? = null,
+    val isPendingSync: Boolean = false
 )

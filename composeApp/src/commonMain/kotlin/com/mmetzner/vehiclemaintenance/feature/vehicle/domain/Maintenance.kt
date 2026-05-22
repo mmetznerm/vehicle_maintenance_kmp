@@ -5,5 +5,6 @@ data class Maintenance(
     val date: String,
     val description: String,
     val workshopName: String?,
-    val photoUrls: List<String>? = null
+    val photoUrls: List<String>? = null,
+    val isPendingSync: Boolean = false
 )

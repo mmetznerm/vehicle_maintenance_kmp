@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 object VehicleSearchRoute
 
 @Serializable
-data class VehicleDetailsRoute(val plate: String)
+object AddVehicleRoute

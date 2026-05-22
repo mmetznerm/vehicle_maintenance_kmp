@@ -1,5 +1,6 @@
 package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -20,5 +21,7 @@ import androidx.room.PrimaryKey
 data class MaintenancePhotoEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val maintenanceId: String,
-    val url: String 
+    val url: String ,
+    @ColumnInfo(defaultValue = SyncStatus.SYNCED)
+    val syncStatus: String = SyncStatus.SYNCED
 )

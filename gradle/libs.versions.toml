@@ -15,6 +15,7 @@ kotlin = "2.3.21"
 material3 = "1.10.0-alpha05"
 ktor = "3.4.3"
 koin = "4.2.1"
+materialIconsExtended = "1.7.3"
 navigationCompose = "2.9.2"
 kotlinx-serialization = "1.11.0"
 coroutines = "1.10.2"
@@ -55,6 +56,7 @@ koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel", version.r
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

@@ -3,6 +3,7 @@ package com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenancePhotoEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceWithPhotos
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.SyncStatus
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleWithMaintenances
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.MaintenanceResponse
@@ -36,6 +37,7 @@ fun VehicleWithMaintenances.toDomain() = Vehicle(
     model = this.vehicle.model,
     brand = this.vehicle.brand,
     year = this.vehicle.year,
+    isPendingSync = this.vehicle.syncStatus == SyncStatus.PENDING,
     maintenances = this.maintenances.map { it.toDomain() }
 )
 
@@ -44,5 +46,22 @@ fun MaintenanceWithPhotos.toDomain() = Maintenance(
     date = this.maintenance.date,
     description = this.maintenance.description,
     workshopName = this.maintenance.workshopName,
+    isPendingSync = this.maintenance.syncStatus == SyncStatus.PENDING,
     photoUrls = this.photos.map { it.url }
+)
+
+fun Vehicle.toPendingEntity() = VehicleEntity(
+    plate = this.plate,
+    model = this.model,
+    brand = this.brand,
+    year = this.year,
+    syncStatus = SyncStatus.PENDING
+)
+
+fun VehicleEntity.toRequestDto() = VehicleResponse(
+    plate = this.plate,
+    model = this.model,
+    brand = this.brand,
+    year = this.year,
+    maintenances = null
 )

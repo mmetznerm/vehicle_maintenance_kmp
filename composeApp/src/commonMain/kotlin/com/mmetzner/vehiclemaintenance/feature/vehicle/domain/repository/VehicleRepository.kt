@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface VehicleRepository {
     suspend fun observeVehicle(plate: String): Flow<Vehicle?>
-
     suspend fun syncVehicle(plate: String): Result<Unit>
+    suspend fun addVehicle(vehicle: Vehicle)
+    suspend fun syncPendingOutbox()
 }

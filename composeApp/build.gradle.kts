@@ -56,6 +56,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.material.icons.extended)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
