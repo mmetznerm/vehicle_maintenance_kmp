@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.database
+﻿package com.mmetzner.vehiclemaintenance.core.database
 
 import android.content.Context
 import androidx.room.Room
@@ -10,3 +10,6 @@ actual class DatabaseBuilder(private val context: Context) {
         return Room.databaseBuilder<AppDatabase>(context.applicationContext, dbFile.absolutePath)
     }
 }
+
+
+

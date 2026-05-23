@@ -1,6 +1,7 @@
-package com.mmetzner.vehiclemaintenance.repository
+﻿package com.mmetzner.vehiclemaintenance.repository
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Maintenance
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.repository.VehicleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +12,7 @@ class FakeOfflineFirstRepository : VehicleRepository {
     var syncCalled = false
     var addedVehicle: Vehicle? = null
     var syncOutboxCalled = false
+    var addedMaintenance: Maintenance? = null
 
 
     override suspend fun observeVehicle(plate: String): Flow<Vehicle?> {
@@ -26,8 +28,18 @@ class FakeOfflineFirstRepository : VehicleRepository {
         addedVehicle = vehicle
     }
 
+    override suspend fun addMaintenance(
+        vehiclePlate: String,
+        maintenance: Maintenance
+    ) {
+        addedMaintenance = maintenance
+    }
+
     override suspend fun syncPendingOutbox() {
         syncOutboxCalled = true
     }
 }
+
+
+
 

@@ -1,10 +1,10 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.dao
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.dao
 
 import androidx.room.*
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenancePhotoEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleWithMaintenances
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenanceEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenancePhotoEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.VehicleEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.VehicleWithMaintenances
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,8 +24,8 @@ interface VehicleDao {
     suspend fun insertPhotos(photos: List<MaintenancePhotoEntity>)
 
     /**
-     * Sincronização Atômica: Se a inserção de fotos falhar, 
-     * nada é salvo, mantendo o estado local íntegro.
+     * SincronizaÃ§Ã£o AtÃ´mica: Se a inserÃ§Ã£o de fotos falhar, 
+     * nada Ã© salvo, mantendo o estado local Ã­ntegro.
      */
     @Transaction
     suspend fun syncVehicleData(
@@ -50,3 +50,5 @@ interface VehicleDao {
     @Query("UPDATE maintenances SET syncStatus = :newStatus WHERE id = :id")
     suspend fun updateMaintenanceSyncStatus(id: String, newStatus: String)
 }
+
+

@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.di
+﻿package com.mmetzner.vehiclemaintenance.core.di
 
 import com.mmetzner.vehiclemaintenance.core.network.createHttpClient
 import org.koin.core.context.startKoin
@@ -9,3 +9,5 @@ import org.koin.dsl.module
 val networkModule = module {
     single { createHttpClient() }
 }
+
+

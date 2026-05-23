@@ -1,4 +1,4 @@
-package com.seuprojeto.feature.vehicle.presentation
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,15 +17,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
-import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.VehicleSearchState
-import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.VehicleSearchViewModel
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchState
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehicleSearchScreen(
     viewModel: VehicleSearchViewModel,
     onNavigateToAddVehicle: () -> Unit,
+    onNavigateToAddMaintenance: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -35,7 +36,7 @@ fun VehicleSearchScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Consultar Veículo") },
+                title = { Text("Consultar VeÃ­culo") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -49,7 +50,7 @@ fun VehicleSearchScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Cadastrar novo veículo"
+                    contentDescription = "Cadastrar novo veÃ­culo"
                 )
             }
         }
@@ -61,7 +62,7 @@ fun VehicleSearchScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Área de Busca
+            // Ãrea de Busca
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -69,7 +70,7 @@ fun VehicleSearchScreen(
             ) {
                 OutlinedTextField(
                     value = plateQuery,
-                    onValueChange = { plateQuery = it.uppercase() }, // Força maiúsculas
+                    onValueChange = { plateQuery = it.uppercase() }, // ForÃ§a maiÃºsculas
                     label = { Text("Digite a Placa") },
                     placeholder = { Text("ABC1D23") },
                     modifier = Modifier.weight(1f),
@@ -106,7 +107,7 @@ fun VehicleSearchScreen(
             when (val currentState = state) {
                 is VehicleSearchState.Idle -> {
                     Text(
-                        text = "Digite uma placa para buscar o histórico de manutenção.",
+                        text = "Digite uma placa para buscar o histÃ³rico de manutenÃ§Ã£o.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(32.dp)
@@ -134,7 +135,10 @@ fun VehicleSearchScreen(
                 }
 
                 is VehicleSearchState.Success -> {
-                    VehicleResultCard(vehicle = currentState.vehicle)
+                    VehicleResultCard(
+                        vehicle = currentState.vehicle,
+                        onAddMaintenance = { onNavigateToAddMaintenance(currentState.vehicle.plate) }
+                    )
                 }
             }
         }
@@ -142,12 +146,13 @@ fun VehicleSearchScreen(
 }
 
 /**
- * Componente privado para exibir os detalhes do veículo.
- * Isso mantém a árvore principal limpa e legível.
+ * Componente privado para exibir os detalhes do veÃ­culo.
+ * Isso mantÃ©m a Ã¡rvore principal limpa e legÃ­vel.
  */
 @Composable
 private fun VehicleResultCard(
     vehicle: Vehicle,
+    onAddMaintenance: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -171,7 +176,6 @@ private fun VehicleResultCard(
                     fontWeight = FontWeight.Bold
                 )
 
-                // O Ícone da Mágica do Offline-First
                 if (vehicle.isPendingSync) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -179,7 +183,7 @@ private fun VehicleResultCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.CloudUpload,
-                            contentDescription = "Sincronização pendente",
+                            contentDescription = "SincronizaÃ§Ã£o pendente",
                             tint = MaterialTheme.colorScheme.secondary
                         )
                         Text(
@@ -204,13 +208,91 @@ private fun VehicleResultCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Espaço para mostrar as manutenções no futuro...
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = "Histórico: ${vehicle.maintenances?.size} registro(s)",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
+                text = "HistÃ³rico de ManutenÃ§Ãµes",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
             )
+
+            if (vehicle.maintenances.isNullOrEmpty()) {
+                Text(
+                    text = "Nenhum registro encontrado.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    vehicle.maintenances?.forEach { maintenance ->
+                        MaintenanceItem(maintenance)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedButton(
+                onClick = onAddMaintenance,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("Cadastrar ManutenÃ§Ã£o")
+            }
         }
     }
 }
+
+@Composable
+private fun MaintenanceItem(maintenance: com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Maintenance) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = maintenance.date,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${maintenance.totalValue ?: 0.0} R$",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
+                text = maintenance.description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "KM: ${maintenance.mileage ?: "N/A"}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = maintenance.workshopName ?: "Oficina nÃ£o informada",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+
+

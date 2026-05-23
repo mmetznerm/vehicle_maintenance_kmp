@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance
+﻿package com.mmetzner.vehiclemaintenance
 
 import android.app.Application
 import com.mmetzner.vehiclemaintenance.core.di.initKoin
@@ -14,3 +14,5 @@ class VehicleMaintenanceApp : Application() {
         }
     }
 }
+
+

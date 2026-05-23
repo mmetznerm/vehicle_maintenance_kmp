@@ -1,19 +1,20 @@
-package com.mmetzner.vehiclemaintenance.core.database
+﻿package com.mmetzner.vehiclemaintenance.core.database
 
 import androidx.room.*
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenancePhotoEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenanceEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenancePhotoEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.VehicleEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.dao.VehicleDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
 @Database(
     entities = [VehicleEntity::class, MaintenanceEntity::class, MaintenancePhotoEntity::class],
-    version = 2,
+    version = 3,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
     ]
 )
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -34,3 +35,6 @@ fun createRoomDatabase(builder: DatabaseBuilder): AppDatabase {
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
 }
+
+
+

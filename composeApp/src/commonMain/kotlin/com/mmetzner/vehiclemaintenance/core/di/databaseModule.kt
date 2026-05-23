@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.di
+﻿package com.mmetzner.vehiclemaintenance.core.di
 
 import com.mmetzner.vehiclemaintenance.core.database.AppDatabase
 import com.mmetzner.vehiclemaintenance.core.database.createRoomDatabase
@@ -8,3 +8,5 @@ val databaseModule = module {
     single<AppDatabase> { createRoomDatabase(get()) }
     single { get<AppDatabase>().vehicleDao() }
 }
+
+

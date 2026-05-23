@@ -1,6 +1,8 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchState
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchViewModel
 import com.mmetzner.vehiclemaintenance.repository.FakeOfflineFirstRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,3 +62,5 @@ class VehicleSearchViewModelTest {
         assertTrue((viewModel.state.value as VehicleSearchState.Error).message.contains("offline"))
     }
 }
+
+

@@ -1,15 +1,15 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenancePhotoEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.MaintenanceWithPhotos
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.SyncStatus
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleEntity
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.VehicleWithMaintenances
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.MaintenanceResponse
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.VehicleResponse
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Maintenance
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenanceEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenancePhotoEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenanceWithPhotos
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.SyncStatus
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.VehicleEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.VehicleWithMaintenances
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.dto.dto.MaintenanceResponse
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.dto.dto.VehicleResponse
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Maintenance
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 
 fun VehicleResponse.toEntity() = VehicleEntity(
     plate = this.plate,
@@ -23,7 +23,9 @@ fun MaintenanceResponse.toEntity(vehiclePlate: String) = MaintenanceEntity(
     vehiclePlate = vehiclePlate,
     date = this.date,
     description = this.description,
-    workshopName = this.workshopName
+    workshopName = this.workshopName,
+    mileage = this.mileage,
+    totalValue = this.totalValue
 )
 
 fun MaintenanceResponse.toPhotoEntities(maintenanceId: String): List<MaintenancePhotoEntity> {
@@ -46,6 +48,8 @@ fun MaintenanceWithPhotos.toDomain() = Maintenance(
     date = this.maintenance.date,
     description = this.maintenance.description,
     workshopName = this.maintenance.workshopName,
+    mileage = this.maintenance.mileage,
+    totalValue = this.maintenance.totalValue,
     isPendingSync = this.maintenance.syncStatus == SyncStatus.PENDING,
     photoUrls = this.photos.map { it.url }
 )
@@ -65,3 +69,16 @@ fun VehicleEntity.toRequestDto() = VehicleResponse(
     year = this.year,
     maintenances = null
 )
+
+fun MaintenanceEntity.toRequestDto() = MaintenanceResponse(
+    id = this.id,
+    date = this.date,
+    description = this.description,
+    workshopName = this.workshopName,
+    mileage = this.mileage,
+    totalValue = this.totalValue,
+    photoUrls = emptyList()
+)
+
+
+

@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.navigation
+﻿package com.mmetzner.vehiclemaintenance.core.navigation
 
 import kotlinx.serialization.Serializable
 
@@ -7,3 +7,9 @@ object VehicleSearchRoute
 
 @Serializable
 object AddVehicleRoute
+
+@Serializable
+data class AddMaintenanceRoute(val plate: String)
+
+
+

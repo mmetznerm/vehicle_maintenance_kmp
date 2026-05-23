@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.di
+﻿package com.mmetzner.vehiclemaintenance.core.di
 
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -14,3 +14,6 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) = startKoin {
 }
 
 fun initKoinIOS() = initKoin {}
+
+
+
