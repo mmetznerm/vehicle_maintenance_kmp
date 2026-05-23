@@ -35,6 +35,8 @@ class LoginViewModelTest {
 
     @Test
     fun `does not call repository when credentials are blank`() = runTest {
+        advanceUntilIdle()
+
         viewModel.login()
         advanceUntilIdle()
 
@@ -45,6 +47,8 @@ class LoginViewModelTest {
 
     @Test
     fun `marks state as authenticated when login succeeds`() = runTest {
+        advanceUntilIdle()
+
         viewModel.onEmailChanged("user@example.com")
         viewModel.onPasswordChanged("password")
 
@@ -58,6 +62,8 @@ class LoginViewModelTest {
 
     @Test
     fun `shows error when login fails`() = runTest {
+        advanceUntilIdle()
+
         repository.result = Result.failure(Exception("Invalid credentials"))
         viewModel.onEmailChanged("user@example.com")
         viewModel.onPasswordChanged("wrong-password")
@@ -69,11 +75,26 @@ class LoginViewModelTest {
         assertFalse(viewModel.state.value.isAuthenticated)
         assertTrue(viewModel.state.value.errorMessage?.contains("Could not sign in") == true)
     }
+
+    @Test
+    fun `restores authenticated state when session exists`() = runTest {
+        repository.hasActiveSession = true
+        viewModel = LoginViewModel(repository)
+
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.isAuthenticated)
+    }
 }
 
 private class FakeAuthRepository : AuthRepository {
     var result: Result<Unit> = Result.success(Unit)
     var loginCalled = false
+    var hasActiveSession = false
+
+    override suspend fun hasActiveSession(): Boolean {
+        return hasActiveSession
+    }
 
     override suspend fun login(email: String, password: String): Result<Unit> {
         loginCalled = true

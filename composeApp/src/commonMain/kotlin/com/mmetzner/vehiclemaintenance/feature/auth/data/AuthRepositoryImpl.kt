@@ -10,6 +10,10 @@ class AuthRepositoryImpl(
     private val tokenStore: AuthTokenStore
 ) : AuthRepository {
 
+    override suspend fun hasActiveSession(): Boolean {
+        return tokenStore.getTokens() != null
+    }
+
     override suspend fun login(email: String, password: String): Result<Unit> {
         return try {
             val response = remoteDataSource.login(email = email, password = password)
