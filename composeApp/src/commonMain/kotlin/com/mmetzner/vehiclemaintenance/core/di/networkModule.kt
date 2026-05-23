@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 val networkModule = module {
     single { ApiConfig() }
-    single { createHttpClient() }
+    single { createHttpClient(get()) }
 }
