@@ -1,8 +1,8 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.add
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.repository.VehicleRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -39,3 +39,5 @@ class AddVehicleViewModel(
 sealed interface AddVehicleUiEvent {
     data object NavigateBack : AddVehicleUiEvent
 }
+
+

@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity
 
 import androidx.room.Embedded
 import androidx.room.Relation
@@ -11,3 +11,5 @@ data class MaintenanceWithPhotos(
     )
     val photos: List<MaintenancePhotoEntity>
 )
+
+

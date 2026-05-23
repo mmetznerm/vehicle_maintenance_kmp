@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.network
+﻿package com.mmetzner.vehiclemaintenance.core.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -16,3 +16,5 @@ fun createHttpClient(): HttpClient {
         }
     }
 }
+
+

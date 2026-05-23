@@ -1,14 +1,16 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.SyncStatus
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.dao.VehicleDao
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.MaintenanceEntity
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity.SyncStatus
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper.toDomain
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper.toEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper.toPendingEntity
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper.toPhotoEntities
 import com.mmetzner.vehiclemaintenance.feature.vehicle.data.mapper.toRequestDto
-import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.VehicleResponse
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.dto.dto.VehicleResponse
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Maintenance
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.repository.VehicleRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -69,22 +71,53 @@ class VehicleRepositoryImpl(
         }
     }
 
+    override suspend fun addMaintenance(vehiclePlate: String, maintenance: Maintenance) {
+        val entity = MaintenanceEntity(
+            id = java.util.UUID.randomUUID().toString(),
+            vehiclePlate = vehiclePlate,
+            date = maintenance.date,
+            description = maintenance.description,
+            workshopName = maintenance.workshopName,
+            mileage = maintenance.mileage,
+            totalValue = maintenance.totalValue,
+            syncStatus = SyncStatus.PENDING
+        )
+        vehicleDao.insertMaintenances(listOf(entity))
+
+        syncScope.launch {
+            syncPendingOutbox()
+        }
+    }
+
     override suspend fun syncPendingOutbox() {
         try {
+            // Sync Vehicles
             val pendingVehicles = vehicleDao.getVehiclesByStatus(SyncStatus.PENDING)
-
             for (entity in pendingVehicles) {
                 val response = httpClient.post("https://api.exemplo_fake.com/v1/vehicles") {
                     contentType(ContentType.Application.Json)
                     setBody(entity.toRequestDto())
                 }
-
                 if (response.status.isSuccess()) {
                     vehicleDao.updateVehicleSyncStatus(entity.plate, SyncStatus.SYNCED)
                 }
             }
-        } catch (_: Exception) {
 
+            // Sync Maintenances
+            val pendingMaintenances = vehicleDao.getMaintenancesByStatus(SyncStatus.PENDING)
+            for (entity in pendingMaintenances) {
+                val response = httpClient.post("https://api.exemplo_fake.com/v1/maintenances") {
+                    contentType(ContentType.Application.Json)
+                    setBody(entity.toRequestDto())
+                }
+                if (response.status.isSuccess()) {
+                    vehicleDao.updateMaintenanceSyncStatus(entity.id, SyncStatus.SYNCED)
+                }
+            }
+        } catch (_: Exception) {
+            // Log error or handle retry logic
         }
     }
 }
+
+

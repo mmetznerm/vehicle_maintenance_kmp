@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance
+﻿package com.mmetzner.vehiclemaintenance
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,3 +23,5 @@ class MainActivity : ComponentActivity() {
 fun AppAndroidPreview() {
     App()
 }
+
+

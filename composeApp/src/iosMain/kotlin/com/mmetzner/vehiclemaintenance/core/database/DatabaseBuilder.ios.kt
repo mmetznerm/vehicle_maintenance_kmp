@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.core.database
+﻿package com.mmetzner.vehiclemaintenance.core.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -13,3 +13,6 @@ actual class DatabaseBuilder {
         )
     }
 }
+
+
+

@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.domain
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model
 
 data class Vehicle(
     val plate: String,
@@ -8,3 +8,5 @@ data class Vehicle(
     val maintenances: List<Maintenance>? = null,
     val isPendingSync: Boolean = false
 )
+
+

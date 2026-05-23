@@ -1,6 +1,6 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data.remote.dto.dto
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,3 +20,5 @@ fun VehicleResponse.toDomain() = Vehicle(
     year = this.year,
     maintenances = this.maintenances?.map { it.toDomain() } ?: emptyList()
 )
+
+

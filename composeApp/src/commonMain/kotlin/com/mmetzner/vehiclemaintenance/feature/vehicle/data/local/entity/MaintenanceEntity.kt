@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -24,6 +24,10 @@ data class MaintenanceEntity(
     val date: String,
     val description: String,
     val workshopName: String?,
+    val mileage: Int?,
+    val totalValue: Double?,
     @ColumnInfo(defaultValue = SyncStatus.SYNCED)
     val syncStatus: String = SyncStatus.SYNCED
 )
+
+

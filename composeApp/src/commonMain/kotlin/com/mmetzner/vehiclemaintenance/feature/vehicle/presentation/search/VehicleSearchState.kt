@@ -1,6 +1,6 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search
 
-import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.Vehicle
+import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 
 sealed interface VehicleSearchState {
     data object Idle : VehicleSearchState
@@ -8,3 +8,5 @@ sealed interface VehicleSearchState {
     data class Success(val vehicle: Vehicle) : VehicleSearchState
     data class Error(val message: String) : VehicleSearchState
 }
+
+

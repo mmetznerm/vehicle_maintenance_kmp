@@ -1,4 +1,4 @@
-package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.add
+﻿package com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,7 +31,7 @@ fun AddVehicleScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cadastrar Veículo") }
+                title = { Text("Cadastrar VeÃ­culo") }
             )
         }
     ) { paddingValues ->
@@ -81,8 +81,10 @@ fun AddVehicleScreen(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text("Salvar Veículo")
+                Text("Salvar VeÃ­culo")
             }
         }
     }
 }
+
+
