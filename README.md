@@ -1,52 +1,52 @@
 # Vehicle Maintenance KMP
 
-Aplicativo Kotlin Multiplatform para consulta e registro de histórico de manutenção de veículos, construído como um projeto de portfólio profissional com foco em arquitetura mobile moderna, integração com backend e evolução incremental para offline-first.
+A Kotlin Multiplatform app for searching and registering vehicle maintenance history, built as a professional portfolio project focused on modern mobile architecture, backend integration, and an incremental offline-first strategy.
 
-O objetivo deste repositório não é demonstrar a maior quantidade possível de bibliotecas. A proposta é construir uma base coerente, sustentável e próxima de um produto real: UI compartilhada com Compose Multiplatform, estado previsível, persistência local, networking compartilhado e sincronização evoluindo de forma pragmática.
+The goal of this repository is not to showcase the largest possible number of libraries. The goal is to build a coherent, sustainable, production-inspired mobile codebase: shared UI with Compose Multiplatform, predictable state management, local persistence, shared networking, and pragmatic synchronization.
 
 ## Status
 
-Projeto em desenvolvimento ativo.
+This project is under active development.
 
-Atualmente o app possui:
+Currently implemented:
 
-- Kotlin Multiplatform com targets Android e iOS.
-- UI compartilhada com Compose Multiplatform.
-- Navegação compartilhada.
-- DI com Koin.
-- Networking compartilhado com Ktor Client.
-- Persistência local com Room Multiplatform.
-- Fluxo inicial de busca de veículo.
-- Cadastro local de veículo.
-- Cadastro local de manutenção.
-- Leitura local-first para veículos e manutenções.
-- Primeira versão de sync best-effort para itens pendentes.
-- Testes compartilhados para ViewModels.
+- Kotlin Multiplatform targeting Android and iOS.
+- Shared UI with Compose Multiplatform.
+- Shared navigation.
+- Dependency injection with Koin.
+- Shared networking with Ktor Client.
+- Local persistence with Room Multiplatform.
+- Initial vehicle search flow.
+- Local vehicle registration.
+- Local maintenance registration.
+- Local-first reads for vehicles and maintenance records.
+- Initial best-effort sync for pending records.
+- Shared ViewModel tests.
 
-Ainda não possui:
+Not implemented yet:
 
-- Login/JWT completo.
-- Integração com backend real.
-- Upload de imagens.
-- Outbox robusta com retry/backoff.
-- Observabilidade mobile.
-- Resolução de conflitos.
+- Full login/JWT flow.
+- Real backend integration.
+- Image upload.
+- Robust outbox with retry/backoff.
+- Mobile observability.
+- Conflict resolution.
 
-Esses pontos fazem parte do roadmap incremental.
+These items are part of the incremental roadmap.
 
-## Domínio
+## Domain
 
-O app representa um fluxo simples e realista para histórico de manutenção de veículos:
+The app models a simple and realistic vehicle maintenance history flow:
 
-1. O usuário pesquisa uma placa.
-2. O app consulta primeiro o banco local.
-3. A rede tenta sincronizar os dados mais recentes.
-4. Se o veículo existir, o app exibe dados do veículo e histórico de manutenções.
-5. Se o veículo não existir, o usuário pode cadastrar um novo veículo.
-6. O usuário pode registrar manutenções localmente.
-7. Operações criadas offline ficam pendentes para sincronização futura.
+1. The user searches by license plate.
+2. The app reads from the local database first.
+3. The network layer tries to synchronize the latest data.
+4. If the vehicle exists, the app displays vehicle details and maintenance history.
+5. If the vehicle does not exist, the user can register a new vehicle.
+6. The user can register maintenance records locally.
+7. Offline operations remain pending until a future synchronization.
 
-O backend esperado é uma arquitetura Java Spring Boot baseada em microsserviços, APIs REST, JWT, PostgreSQL, Kafka, Docker e OpenAPI.
+The expected backend is a Java Spring Boot microservices architecture using REST APIs, JWT, PostgreSQL, Kafka, Docker, and OpenAPI.
 
 ## Stack
 
@@ -64,166 +64,166 @@ O backend esperado é uma arquitetura Java Spring Boot baseada em microsserviço
 - Gradle Kotlin DSL
 - Kotlin Test
 
-## Arquitetura
+## Architecture
 
-A arquitetura atual usa uma separação pragmática por feature, com camadas claras sem excesso de abstrações:
+The current architecture uses pragmatic feature-based organization, with clear layers and no unnecessary abstractions:
 
 ```text
 composeApp/src/commonMain/kotlin/com/mmetzner/vehiclemaintenance
-├── core
-│   ├── database
-│   ├── di
-│   ├── navigation
-│   ├── network
-│   └── util
-└── feature
-    └── vehicle
-        ├── data
-        │   ├── local
-        │   │   ├── dao
-        │   │   └── entity
-        │   ├── mapper
-        │   └── remote
-        │       └── dto
-        ├── domain
-        │   ├── model
-        │   └── repository
-        └── presentation
-            ├── addmaintenance
-            ├── addvehicle
-            └── search
++-- core
+|   +-- database
+|   +-- di
+|   +-- navigation
+|   +-- network
+|   +-- util
++-- feature
+    +-- vehicle
+        +-- data
+        |   +-- local
+        |   |   +-- dao
+        |   |   +-- entity
+        |   +-- mapper
+        |   +-- remote
+        |       +-- dto
+        +-- domain
+        |   +-- model
+        |   +-- repository
+        +-- presentation
+            +-- addmaintenance
+            +-- addvehicle
+            +-- search
 ```
 
-### Camadas
+### Layers
 
 `presentation`
 
-Contém telas Compose, ViewModels e UI state. A UI observa `StateFlow` e envia eventos explícitos para os ViewModels.
+Contains Compose screens, ViewModels, and UI state. The UI observes `StateFlow` and sends explicit events to ViewModels.
 
 `domain`
 
-Contém modelos e contratos usados pela feature. A camada permanece leve porque o projeto ainda não precisa de uma árvore grande de use cases.
+Contains feature models and contracts. This layer is intentionally lightweight because the project does not yet need a large use case hierarchy.
 
 `data`
 
-Coordena persistência local, chamadas remotas e mapeamentos. O repository é o ponto principal de orquestração offline-first.
+Coordinates local persistence, remote calls, and mapping. The repository is the main offline-first orchestration boundary.
 
 `core`
 
-Agrupa infraestrutura compartilhada: banco, DI, navegação, networking e utilitários multiplatform.
+Contains shared infrastructure: database, dependency injection, navigation, networking, and multiplatform utilities.
 
-## Estratégia Offline-First
+## Offline-First Strategy
 
-A estratégia offline-first está sendo construída de forma incremental.
+The offline-first strategy is being built incrementally.
 
-Decisão atual:
+Current decision:
 
-- O banco local é a fonte primária de leitura.
-- A busca observa dados locais via `Flow`.
-- A rede sincroniza e atualiza o banco local.
-- Cadastros são persistidos localmente com `SyncStatus.PENDING`.
-- O app tenta sincronizar pendências em background usando uma abordagem best-effort.
+- The local database is the primary source of truth for reads.
+- Vehicle search observes local data through `Flow`.
+- Network synchronization updates local data.
+- New records are persisted locally with `SyncStatus.PENDING`.
+- The app attempts to synchronize pending records in the background using a best-effort approach.
 
-Essa abordagem já permite exercitar o fluxo local-first sem introduzir cedo demais uma engine de sincronização complexa.
+This already exercises a local-first flow without introducing a complex sync engine too early.
 
-Próxima evolução planejada:
+Planned evolution:
 
-- Criar uma outbox dedicada para operações pendentes.
-- Registrar tipo de operação, payload, tentativa, erro e timestamps.
-- Implementar retry com backoff.
-- Separar sync manual de sync automático.
-- Adicionar controle de conectividade.
-- Adicionar fila específica para upload de imagens.
-- Representar estados `PENDING`, `SYNCING`, `SYNCED` e `FAILED`.
+- Introduce a dedicated outbox for pending operations.
+- Store operation type, payload, retry count, error, and timestamps.
+- Implement retry with backoff.
+- Separate manual sync from automatic sync.
+- Add connectivity awareness.
+- Add a dedicated queue for image uploads.
+- Represent sync states such as `PENDING`, `SYNCING`, `SYNCED`, and `FAILED`.
 
-O projeto evita, neste momento, soluções mais pesadas como event sourcing, CRDTs ou uma engine genérica de conflitos. Para este domínio, consistência eventual simples e idempotência no backend são escolhas mais realistas.
+At this stage, the project intentionally avoids heavier solutions such as event sourcing, CRDTs, or a generic conflict engine. For this domain, simple eventual consistency and backend idempotency are more realistic choices.
 
 ## Networking
 
-O networking é compartilhado em `commonMain` com Ktor Client.
+Networking is shared in `commonMain` using Ktor Client.
 
-A configuração de base URL usa `expect/actual`:
+The base URL configuration uses `expect/actual`:
 
 - Android Emulator: `http://10.0.2.2:8080`
 - iOS Simulator: `http://localhost:8080`
 
-As chamadas da feature de veículos passam por um `VehicleRemoteDataSource`, mantendo URLs e detalhes HTTP fora do repository.
+Vehicle API calls go through `VehicleRemoteDataSource`, keeping endpoint details out of the repository.
 
-Estrutura atual:
+Current structure:
 
 ```text
 core/network
-├── ApiConfig.kt
-└── createHttpClient.kt
++-- ApiConfig.kt
++-- createHttpClient.kt
 
 feature/vehicle/data/remote
-├── VehicleRemoteDataSource.kt
-└── dto
-    ├── VehicleResponse.kt
-    └── MaintenanceResponse.kt
++-- VehicleRemoteDataSource.kt
++-- dto
+    +-- VehicleResponse.kt
+    +-- MaintenanceResponse.kt
 ```
 
-## Persistência Local
+## Local Persistence
 
-O projeto usa Room Multiplatform com SQLite bundled driver.
+The project uses Room Multiplatform with the bundled SQLite driver.
 
-Entidades atuais:
+Current entities:
 
 - `VehicleEntity`
 - `MaintenanceEntity`
 - `MaintenancePhotoEntity`
 
-Relacionamentos:
+Relationships:
 
-- Um veículo possui várias manutenções.
-- Uma manutenção possui várias fotos.
+- A vehicle has many maintenance records.
+- A maintenance record has many photos.
 
-As entidades já carregam `syncStatus`, preparando o caminho para sincronização offline-first mais robusta.
+Entities already carry `syncStatus`, preparing the codebase for a more robust offline-first sync flow.
 
-## Decisões Técnicas
+## Technical Decisions
 
-### Room Multiplatform em vez de SQLDelight
+### Room Multiplatform Instead of SQLDelight
 
-Room Multiplatform reduz atrito para quem vem de Android e mantém uma experiência familiar com DAO, entidades e relações.
-
-Trade-off:
-
-- Bom para produtividade e leitura por recrutadores Android.
-- Menos explícito que SQLDelight em controle de SQL e migrações manuais.
-
-### Compose Multiplatform compartilhado
-
-A UI está em `commonMain`, permitindo reaproveitar tela e estado entre Android e iOS.
+Room Multiplatform reduces friction for developers coming from Android and keeps a familiar DAO/entity/relationship model.
 
 Trade-off:
 
-- Excelente para demonstrar KMP real.
-- Exige cuidado com UX nativa e limitações específicas de cada plataforma.
+- Good for productivity and readability for Android reviewers.
+- Less explicit than SQLDelight for SQL control and manual migration design.
 
-### Repository como boundary principal
+### Shared Compose Multiplatform UI
 
-O projeto não cria interfaces para cada data source neste momento. A interface principal é o repository da feature.
+The UI lives in `commonMain`, allowing screens and state handling to be reused across Android and iOS.
 
 Trade-off:
 
-- Menos boilerplate.
-- Arquitetura mais simples.
-- Testes mais profundos de sync podem justificar novas abstrações depois.
+- Excellent for demonstrating real KMP usage.
+- Requires care with native UX expectations and platform-specific limitations.
 
-### Use cases sob demanda
+### Repository as the Main Boundary
 
-Use cases serão adicionados apenas quando houver regra de negócio suficiente para justificar uma camada dedicada.
+The project does not introduce interfaces for every data source at this stage. The main feature contract is the repository.
 
-Neste estágio, criar um use case para cada chamada seria mais aparência de arquitetura do que necessidade real.
+Trade-off:
 
-## Como Rodar
+- Less boilerplate.
+- Simpler architecture.
+- Deeper sync tests may justify additional abstractions later.
 
-Pré-requisitos:
+### Use Cases on Demand
 
-- Android Studio recente com suporte a Kotlin Multiplatform.
-- JDK compatível com o Android Gradle Plugin.
-- Xcode para build iOS.
-- Backend local rodando na porta `8080`, quando a integração real estiver disponível.
+Use cases will be introduced only when business logic is significant enough to justify a dedicated layer.
+
+At this stage, creating one use case per repository call would be architecture theater rather than a practical need.
+
+## Running the Project
+
+Prerequisites:
+
+- Recent Android Studio version with Kotlin Multiplatform support.
+- JDK compatible with the Android Gradle Plugin.
+- Xcode for iOS builds.
+- Local backend running on port `8080` when real integration is available.
 
 Build Android:
 
@@ -231,101 +231,101 @@ Build Android:
 .\gradlew.bat :composeApp:assembleDebug
 ```
 
-Compilar Kotlin Android e rodar testes compartilhados:
+Compile Android Kotlin and run shared tests:
 
 ```powershell
 .\gradlew.bat :composeApp:compileDebugKotlinAndroid :composeApp:allTests
 ```
 
-Rodar iOS:
+Run iOS:
 
-Abra o projeto `iosApp` no Xcode e execute no simulator.
+Open the `iosApp` project in Xcode and run it on a simulator.
 
-## Testes
+## Tests
 
-O projeto possui testes em `commonTest`, cobrindo comportamento de ViewModels e fluxo local-first inicial.
+The project has tests in `commonTest`, covering ViewModel behavior and the initial local-first flow.
 
-Exemplos:
+Examples:
 
-- Quando há cache local, a busca mostra sucesso mesmo com falha de rede.
-- Quando não há cache e a rede falha, a busca mostra erro.
-- Cadastro de veículo válido salva no repository e emite evento de navegação.
-- Entradas inválidas não disparam salvamento.
+- When local cache exists, search shows success even if the network fails.
+- When there is no local cache and the network fails, search shows an error.
+- Valid vehicle input is saved through the repository and emits a navigation event.
+- Invalid input does not trigger saving.
 
 ## Roadmap
 
-### Fase 1: Fundação Mobile
+### Phase 1: Mobile Foundation
 
-- Estrutura KMP Android/iOS.
+- KMP Android/iOS structure.
 - Compose Multiplatform.
 - Koin.
 - Room Multiplatform.
 - Ktor Client.
-- Navegação compartilhada.
-- Fluxo inicial de veículo.
+- Shared navigation.
+- Initial vehicle flow.
 
-Status: em andamento.
+Status: in progress.
 
-### Fase 2: Integração Real com Backend
+### Phase 2: Real Backend Integration
 
-- Configuração por ambiente.
-- Contratos alinhados com OpenAPI.
-- Tratamento centralizado de erros HTTP.
+- Environment-based configuration.
+- Contracts aligned with OpenAPI.
+- Centralized HTTP error handling.
 - Login.
-- Armazenamento seguro de token.
-- Interceptor JWT no Ktor.
+- Secure token storage.
+- JWT interceptor in Ktor.
 
-### Fase 3: Offline-First Profissional
+### Phase 3: Professional Offline-First
 
-- Outbox dedicada.
-- Retry com backoff.
-- Sync manual.
-- Sync automático.
-- Controle de conectividade.
-- Estados de sincronização na UI.
+- Dedicated outbox.
+- Retry with backoff.
+- Manual sync.
+- Automatic sync.
+- Connectivity awareness.
+- Sync states in the UI.
 
-### Fase 4: Upload de Imagens
+### Phase 4: Image Upload
 
-- Seleção de múltiplas fotos.
-- Persistência local de arquivos pendentes.
-- Upload posterior.
-- Retry independente por foto.
-- Associação foto/manutenção após sync.
+- Multiple photo selection.
+- Local persistence for pending files.
+- Deferred upload.
+- Independent retry per photo.
+- Photo/maintenance association after sync.
 
-### Fase 5: Qualidade de Produção
+### Phase 5: Production Quality
 
-- Logs estruturados.
-- Métricas de sync.
-- Testes de repository.
-- Testes de mappers.
-- Testes de data sources com mock engine.
-- Documentação de arquitetura.
-- CI no GitHub Actions.
+- Structured logs.
+- Sync metrics.
+- Repository tests.
+- Mapper tests.
+- Data source tests using Ktor MockEngine.
+- Architecture documentation.
+- GitHub Actions CI.
 
-## O Que Este Projeto Demonstra
+## What This Project Demonstrates
 
-- Evolução incremental de um app KMP.
-- Separação clara entre UI, domínio e dados.
-- Uso pragmático de arquitetura mobile moderna.
-- Pensamento offline-first desde o início.
-- Integração preparada para backend Java Spring Boot.
-- Consciência de trade-offs entre portfólio e produção.
-- Cuidado com multiplatform real, incluindo diferenças Android/iOS.
+- Incremental evolution of a KMP app.
+- Clear separation between UI, domain, and data.
+- Pragmatic use of modern mobile architecture.
+- Offline-first thinking from the beginning.
+- Backend integration readiness for Java Spring Boot.
+- Awareness of portfolio vs production trade-offs.
+- Real multiplatform care, including Android/iOS differences.
 
-## Limitações Atuais
+## Current Limitations
 
-- A sincronização ainda não possui retry persistente.
-- Falhas de sync ainda não são expostas de forma rica para a UI.
-- O armazenamento de token ainda não foi implementado.
-- A camada de network ainda não possui refresh token.
-- Upload de imagens ainda está apenas modelado no banco.
-- O backend real ainda não está conectado.
+- Synchronization does not yet have persistent retry.
+- Sync failures are not yet richly exposed to the UI.
+- Token storage has not been implemented yet.
+- The networking layer does not yet support refresh tokens.
+- Image upload is currently only represented in the local data model.
+- The real backend is not connected yet.
 
-Essas limitações são intencionais para manter o projeto incremental e revisável.
+These limitations are intentional so the project remains incremental and reviewable.
 
-## Convenção de Commits
+## Commit Convention
 
-Sugestões de commits semânticos usados durante a evolução:
+Suggested semantic commits for the project evolution:
 
 ```text
 feat: add vehicle search flow
@@ -337,8 +337,8 @@ test: cover vehicle search offline behavior
 docs: document kmp architecture and roadmap
 ```
 
-## Licença
+## License
 
-Este projeto ainda não possui licença definida.
+This project does not have a license yet.
 
-Antes de publicar como open source, adicionar uma licença explícita como MIT ou Apache 2.0.
+Before publishing it as open source, add an explicit license such as MIT or Apache 2.0.
