@@ -11,17 +11,19 @@ import androidx.navigation.toRoute
 import com.mmetzner.vehiclemaintenance.core.navigation.AddVehicleRoute
 import com.mmetzner.vehiclemaintenance.core.navigation.AddMaintenanceRoute
 import com.mmetzner.vehiclemaintenance.core.navigation.LoginRoute
-import com.mmetzner.vehiclemaintenance.core.navigation.VehicleSearchRoute
+import com.mmetzner.vehiclemaintenance.core.navigation.RegisterRoute
+import com.mmetzner.vehiclemaintenance.core.navigation.VehicleHomeRoute
 import com.mmetzner.vehiclemaintenance.core.ui.theme.VehicleMaintenanceTheme
 import com.mmetzner.vehiclemaintenance.feature.auth.domain.repository.AuthRepository
 import com.mmetzner.vehiclemaintenance.feature.auth.presentation.login.LoginScreen
 import com.mmetzner.vehiclemaintenance.feature.auth.presentation.login.LoginViewModel
+import com.mmetzner.vehiclemaintenance.feature.auth.presentation.register.RegisterScreen
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addmaintenance.AddMaintenanceViewModel
-import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchViewModel
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle.AddVehicleScreen
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle.AddVehicleViewModel
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addmaintenance.AddMaintenanceScreen
-import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.search.VehicleSearchScreen
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.home.VehicleHomeScreen
+import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.home.VehicleHomeViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -43,28 +45,42 @@ fun App() {
                     viewModel = viewModel,
                     onAuthenticated = {
                         navController.navigate(
-                            route = VehicleSearchRoute,
+                            route = VehicleHomeRoute,
                             navOptions = navOptions {
                                 popUpTo(LoginRoute) {
                                     inclusive = true
                                 }
                             }
                         )
+                    },
+                    onCreateAccount = {
+                        navController.navigate(RegisterRoute)
                     }
                 )
             }
 
-            composable<VehicleSearchRoute> {
-                val viewModel = koinViewModel<VehicleSearchViewModel>()
+            composable<RegisterRoute> {
+                val viewModel = koinViewModel<AddVehicleViewModel>()
+
+                RegisterScreen(
+                    viewModel = viewModel,
+                    onBackToLogin = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable<VehicleHomeRoute> {
+                val viewModel = koinViewModel<VehicleHomeViewModel>()
                 val authRepository = koinInject<AuthRepository>()
                 val scope = rememberCoroutineScope()
 
-                VehicleSearchScreen(
+                VehicleHomeScreen(
                     viewModel = viewModel,
-                    onNavigateToAddVehicle = {
+                    onRegisterVehicle = {
                         navController.navigate(AddVehicleRoute)
                     },
-                    onNavigateToAddMaintenance = { plate ->
+                    onAddMaintenance = { plate ->
                         navController.navigate(AddMaintenanceRoute(plate))
                     },
                     onLogout = {
@@ -73,7 +89,7 @@ fun App() {
                             navController.navigate(
                                 route = LoginRoute,
                                 navOptions = navOptions {
-                                    popUpTo(VehicleSearchRoute) {
+                                    popUpTo(VehicleHomeRoute) {
                                         inclusive = true
                                     }
                                 }

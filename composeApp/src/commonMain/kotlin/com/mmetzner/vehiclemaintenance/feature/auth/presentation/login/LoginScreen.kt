@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 fun LoginScreen(
     viewModel: LoginViewModel,
     onAuthenticated: () -> Unit,
+    onCreateAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -84,7 +86,7 @@ fun LoginScreen(
             )
 
             Text(
-                text = "Access vehicle history and keep maintenance records synced.",
+                text = "Access your private vehicle history and share it only when needed.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -160,6 +162,13 @@ fun LoginScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Sign in")
                         }
+                    }
+
+                    TextButton(
+                        onClick = onCreateAccount,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Create owner account")
                     }
                 }
             }

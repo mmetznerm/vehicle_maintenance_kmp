@@ -5,6 +5,7 @@ import com.mmetzner.vehiclemaintenance.feature.vehicle.domain.model.Vehicle
 import kotlinx.coroutines.flow.Flow
 
 interface VehicleRepository {
+    suspend fun observePrimaryVehicle(): Flow<Vehicle?>
     suspend fun observeVehicle(plate: String): Flow<Vehicle?>
     suspend fun syncVehicle(plate: String): Result<Unit>
     suspend fun addVehicle(vehicle: Vehicle)

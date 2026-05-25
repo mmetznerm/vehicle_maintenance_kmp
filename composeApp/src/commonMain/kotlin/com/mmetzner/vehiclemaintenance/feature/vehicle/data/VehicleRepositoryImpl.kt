@@ -27,6 +27,12 @@ class VehicleRepositoryImpl(
 
     private val syncScope = CoroutineScope(Dispatchers.IO)
 
+    override suspend fun observePrimaryVehicle(): Flow<Vehicle?> {
+        return vehicleDao.observePrimaryVehicle().map { relation ->
+            relation?.toDomain()
+        }
+    }
+
     override suspend fun observeVehicle(plate: String): Flow<Vehicle?> {
         return vehicleDao.observeVehicleByPlate(plate).map { relation ->
             relation?.toDomain()
