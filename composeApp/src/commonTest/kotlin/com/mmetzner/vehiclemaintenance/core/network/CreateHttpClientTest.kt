@@ -60,4 +60,27 @@ class CreateHttpClientTest {
 
         assertNull(authorizationHeader)
     }
+
+    @Test
+    fun `does not add bearer token to register request`() = runTest {
+        val tokenStore = InMemoryAuthTokenStore()
+        tokenStore.saveTokens(AuthTokens(accessToken = "access-token"))
+
+        var authorizationHeader: String? = null
+        val client = createHttpClient(
+            authTokenStore = tokenStore,
+            engine = MockEngine { request ->
+                authorizationHeader = request.headers[HttpHeaders.Authorization]
+                respond(
+                    content = "{}",
+                    status = HttpStatusCode.OK,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json")
+                )
+            }
+        )
+
+        client.get("https://example.com/v1/auth/register")
+
+        assertNull(authorizationHeader)
+    }
 }

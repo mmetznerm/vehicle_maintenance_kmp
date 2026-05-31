@@ -29,6 +29,29 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun createAccount(
+        fullName: String,
+        emailOrPhone: String,
+        password: String
+    ): Result<Unit> {
+        return try {
+            val response = remoteDataSource.createAccount(
+                fullName = fullName,
+                emailOrPhone = emailOrPhone,
+                password = password
+            )
+            tokenStore.saveTokens(
+                AuthTokens(
+                    accessToken = response.accessToken,
+                    refreshToken = response.refreshToken
+                )
+            )
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun logout() {
         tokenStore.clear()
     }

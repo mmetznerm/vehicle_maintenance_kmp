@@ -18,6 +18,7 @@ import com.mmetzner.vehiclemaintenance.feature.auth.domain.repository.AuthReposi
 import com.mmetzner.vehiclemaintenance.feature.auth.presentation.login.LoginScreen
 import com.mmetzner.vehiclemaintenance.feature.auth.presentation.login.LoginViewModel
 import com.mmetzner.vehiclemaintenance.feature.auth.presentation.register.RegisterScreen
+import com.mmetzner.vehiclemaintenance.feature.auth.presentation.register.RegisterViewModel
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addmaintenance.AddMaintenanceViewModel
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle.AddVehicleScreen
 import com.mmetzner.vehiclemaintenance.feature.vehicle.presentation.addvehicle.AddVehicleViewModel
@@ -60,10 +61,20 @@ fun App() {
             }
 
             composable<RegisterRoute> {
-                val viewModel = koinViewModel<AddVehicleViewModel>()
+                val viewModel = koinViewModel<RegisterViewModel>()
 
                 RegisterScreen(
                     viewModel = viewModel,
+                    onAuthenticated = {
+                        navController.navigate(
+                            route = VehicleHomeRoute,
+                            navOptions = navOptions {
+                                popUpTo(LoginRoute) {
+                                    inclusive = true
+                                }
+                            }
+                        )
+                    },
                     onBackToLogin = {
                         navController.popBackStack()
                     }

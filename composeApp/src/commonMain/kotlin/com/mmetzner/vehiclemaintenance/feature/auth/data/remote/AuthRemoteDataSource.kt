@@ -2,6 +2,7 @@ package com.mmetzner.vehiclemaintenance.feature.auth.data.remote
 
 import com.mmetzner.vehiclemaintenance.core.network.ApiConfig
 import com.mmetzner.vehiclemaintenance.core.network.toNetworkRequestException
+import com.mmetzner.vehiclemaintenance.feature.auth.data.remote.dto.CreateAccountRequest
 import com.mmetzner.vehiclemaintenance.feature.auth.data.remote.dto.LoginRequest
 import com.mmetzner.vehiclemaintenance.feature.auth.data.remote.dto.LoginResponse
 import io.ktor.client.HttpClient
@@ -24,6 +25,29 @@ class AuthRemoteDataSource(
 
         if (!response.status.isSuccess()) {
             throw response.status.toNetworkRequestException("Login")
+        }
+
+        return response.body()
+    }
+
+    suspend fun createAccount(
+        fullName: String,
+        emailOrPhone: String,
+        password: String
+    ): LoginResponse {
+        val response = httpClient.post("${apiConfig.normalizedBaseUrl}/v1/auth/register") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                CreateAccountRequest(
+                    fullName = fullName,
+                    emailOrPhone = emailOrPhone,
+                    password = password
+                )
+            )
+        }
+
+        if (!response.status.isSuccess()) {
+            throw response.status.toNetworkRequestException("Create account")
         }
 
         return response.body()
