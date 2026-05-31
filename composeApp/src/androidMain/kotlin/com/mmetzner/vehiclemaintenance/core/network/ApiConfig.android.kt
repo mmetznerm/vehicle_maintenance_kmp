@@ -1,3 +1,5 @@
 package com.mmetzner.vehiclemaintenance.core.network
 
-actual fun defaultApiBaseUrl(): String = "http://10.0.2.2:8080"
+import com.mmetzner.vehiclemaintenance.BuildConfig
+
+actual fun defaultApiBaseUrl(): String = BuildConfig.API_BASE_URL

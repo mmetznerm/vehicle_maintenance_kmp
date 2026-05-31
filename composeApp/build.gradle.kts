@@ -1,3 +1,4 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -9,6 +10,22 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun String.asBuildConfigString(): String {
+    return "\"${replace("\\", "\\\\").replace("\"", "\\\"")}\""
+}
+
+val apiBaseUrl: String = localProperties.getProperty(
+    "api.baseUrl",
+    "http://10.0.2.2:8080"
+)
 
 kotlin {
     androidTarget {
@@ -92,6 +109,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("boolean", "IS_MOCK", "false")
+        buildConfigField("String", "API_BASE_URL", apiBaseUrl.asBuildConfigString())
     }
     buildFeatures {
         buildConfig = true
