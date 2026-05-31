@@ -1,6 +1,6 @@
 # Vehicle Maintenance KMP
 
-A Kotlin Multiplatform app for searching and registering vehicle maintenance history, built as a professional portfolio project focused on modern mobile architecture, backend integration, and an incremental offline-first strategy.
+A Kotlin Multiplatform app for managing private vehicle maintenance history, built as a professional portfolio project focused on modern mobile architecture, backend integration, and an incremental offline-first strategy.
 
 The goal of this repository is not to showcase the largest possible number of libraries. The goal is to build a coherent, sustainable, production-inspired mobile codebase: shared UI with Compose Multiplatform, predictable state management, local persistence, shared networking, and pragmatic synchronization.
 
@@ -13,7 +13,7 @@ Currently implemented:
 - Kotlin Multiplatform targeting Android and iOS.
 - Shared UI with Compose Multiplatform.
 - Custom Material 3 visual theme.
-- Modern login, vehicle search, vehicle registration, and maintenance registration screens.
+- Modern login, owner registration, vehicle home, vehicle registration, and maintenance registration screens.
 - Android launcher icon.
 - Shared navigation.
 - Dependency injection with Koin.
@@ -23,7 +23,7 @@ Currently implemented:
 - Platform token storage abstraction.
 - Android token storage backed by Android Keystore encryption.
 - Local persistence with Room Multiplatform.
-- Initial vehicle search flow.
+- Owner-centric vehicle history flow.
 - Local vehicle registration.
 - Local maintenance registration.
 - Local-first reads for vehicles and maintenance records.
@@ -44,15 +44,15 @@ These items are part of the incremental roadmap.
 
 ## Domain
 
-The app models a simple and realistic vehicle maintenance history flow:
+The app models a private owner-centric vehicle maintenance history flow:
 
-1. The user searches by license plate.
-2. The app reads from the local database first.
-3. The network layer tries to synchronize the latest data.
-4. If the vehicle exists, the app displays vehicle details and maintenance history.
-5. If the vehicle does not exist, the user can register a new vehicle.
-6. The user can register maintenance records locally.
-7. Offline operations remain pending until a future synchronization.
+1. The owner signs in.
+2. If the owner does not have an account yet, they register their basic data and vehicle.
+3. After login, the app opens the private home screen for the owner's vehicle.
+4. The app displays basic vehicle information and maintenance history.
+5. The owner can register maintenance records locally.
+6. The owner can explicitly share the vehicle history with someone else in the future.
+7. Offline operations remain pending until synchronization succeeds.
 
 The expected backend is a Java Spring Boot microservices architecture using REST APIs, JWT, PostgreSQL, Kafka, Docker, and OpenAPI.
 
@@ -105,7 +105,7 @@ composeApp/src/commonMain/kotlin/com/mmetzner/vehiclemaintenance
         +-- presentation
             +-- addmaintenance
             +-- addvehicle
-            +-- search
+            +-- home
 ```
 
 ### Layers
@@ -133,11 +133,12 @@ The app uses a clean Material 3 interface with a restrained teal, graphite, whit
 Current screens:
 
 - Login
-- Vehicle search
+- Owner registration
+- Vehicle home
 - Vehicle registration
 - Maintenance registration
 
-The design intentionally avoids a marketing-style layout. The goal is to look like a real operational mobile app that a mechanic shop, fleet operator, or vehicle owner could use repeatedly.
+The design intentionally avoids a marketing-style layout. The goal is to look like a real operational mobile app that a vehicle owner could use repeatedly and share only when there is a clear reason.
 
 ## Offline-First Strategy
 
@@ -146,7 +147,7 @@ The offline-first strategy is being built incrementally.
 Current decision:
 
 - The local database is the primary source of truth for reads.
-- Vehicle search observes local data through `Flow`.
+- The home screen observes the owner's primary vehicle from local data through `Flow`.
 - Network synchronization updates local data.
 - New records are persisted locally with `SyncStatus.PENDING`.
 - The app attempts to synchronize pending records in the background using a best-effort approach.
@@ -174,7 +175,7 @@ The base URL configuration uses `expect/actual`:
 - Android Emulator: `http://10.0.2.2:8080`
 - iOS Simulator: `http://localhost:8080`
 
-Vehicle API calls go through `VehicleRemoteDataSource`, keeping endpoint details out of the repository.
+Vehicle API calls go through `VehicleRemoteDataSource`, keeping endpoint details out of the repository. The current mobile code still has compatibility with plate-based vehicle calls, but the product direction is now owner-scoped APIs such as `/v1/me/vehicles`.
 
 Authentication uses `AuthRemoteDataSource` for login and a shared `AuthRepository` for session checks and logout. Ktor's Bearer auth plugin attaches the stored access token to authenticated requests while skipping the login endpoint.
 
@@ -303,8 +304,8 @@ The project has tests in `commonTest`, covering ViewModel behavior and the initi
 
 Examples:
 
-- When local cache exists, search shows success even if the network fails.
-- When there is no local cache and the network fails, search shows an error.
+- When local cache exists, the owner flow can render vehicle data without waiting for network.
+- When there is no local vehicle, the home screen presents an onboarding state.
 - Valid vehicle input is saved through the repository and emits a navigation event.
 - Invalid input does not trigger saving.
 
@@ -327,6 +328,9 @@ Status: in progress.
 - Environment-based configuration.
 - Contracts aligned with OpenAPI.
 - Centralized HTTP error handling.
+- Owner registration.
+- Owner-scoped vehicle retrieval.
+- Controlled history sharing through share links.
 - Refresh token flow.
 - Expired session handling.
 - iOS Keychain token storage.
@@ -366,6 +370,7 @@ Status: in progress.
 - Pragmatic use of modern mobile architecture.
 - Offline-first thinking from the beginning.
 - Backend integration readiness for Java Spring Boot.
+- Privacy-aware product flow for owner-managed vehicle history.
 - Awareness of portfolio vs production trade-offs.
 - Real multiplatform care, including Android/iOS differences.
 
@@ -377,6 +382,7 @@ Status: in progress.
 - Image upload is currently only represented in the local data model.
 - The real backend is not connected yet.
 - iOS token storage still needs a Keychain implementation before production use.
+- Sharing is represented in the UI, but native share and backend share links are not implemented yet.
 
 These limitations are intentional so the project remains incremental and reviewable.
 
@@ -385,12 +391,12 @@ These limitations are intentional so the project remains incremental and reviewa
 Suggested semantic commits for the project evolution:
 
 ```text
-feat: add vehicle search flow
+feat: add owner vehicle home flow
 feat: add local vehicle persistence
 feat: add maintenance registration
 refactor: extract vehicle remote data source and api config
 fix: make shared vehicle flow compile across kmp targets
-test: cover vehicle search offline behavior
+test: cover vehicle home offline behavior
 docs: document kmp architecture and roadmap
 ```
 

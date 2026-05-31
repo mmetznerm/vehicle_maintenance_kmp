@@ -14,6 +14,10 @@ interface VehicleDao {
     @Query("SELECT * FROM vehicles WHERE plate = :plate")
     fun observeVehicleByPlate(plate: String): Flow<VehicleWithMaintenances?>
 
+    @Transaction
+    @Query("SELECT * FROM vehicles ORDER BY plate LIMIT 1")
+    fun observePrimaryVehicle(): Flow<VehicleWithMaintenances?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVehicle(vehicle: VehicleEntity)
 
