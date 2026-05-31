@@ -101,5 +101,13 @@ private class FakeAuthRepository : AuthRepository {
         return result
     }
 
+    override suspend fun createAccount(
+        fullName: String,
+        emailOrPhone: String,
+        password: String
+    ): Result<Unit> {
+        return result
+    }
+
     override suspend fun logout() = Unit
 }
